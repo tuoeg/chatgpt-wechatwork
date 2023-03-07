@@ -27,6 +27,7 @@ type MsgResponse struct {
 	ToUser                 string `json:"touser,omitempty"`
 	ToParty                string `json:"toparty,omitempty"`
 	ToTag                  string `json:"totag,omitempty"`
+	MsgId                  string `json:"msgid,omitempty"`
 	MsgType                string `json:"msgtype,omitempty"`
 	AgentId                string `json:"agentid,omitempty"`
 	Text                   Text   `json:"text,omitempty"`
@@ -34,6 +35,17 @@ type MsgResponse struct {
 	EnableIdTrans          int    `json:"enable_id_trans,omitempty"`
 	EnableDuplicateCheck   int    `json:"enable_duplicate_check,omitempty"`
 	DuplicateCheckInterval int    `json:"duplicate_check_interval,omitempty"`
+}
+
+type MsgResponseResponse struct {
+	Errcode        int    `json:"errcode,omitempty"`
+	Errmsg         string `json:"errmsg,omitempty"`
+	InvalidUser    string `json:"invaliduser,omitempty"`
+	InvalidParty   string `json:"invalidparty,omitempty"`
+	InvalidTag     string `json:"invalidtag,omitempty"`
+	UnLicensedUser string `json:"unlicenseduser,omitempty"`
+	MsgId          string `json:"msgid,omitempty"`
+	ResponseCode   string `json:"response_code,omitempty"`
 }
 
 type Text struct {

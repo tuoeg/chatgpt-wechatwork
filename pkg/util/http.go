@@ -35,7 +35,6 @@ func SendHTTPRequest(client *http.Client, url, method string, reqBody interface{
 			req.Header.Set("Content-Type", option.ContentType)
 		}
 		if option.Token != "" {
-			fmt.Println("auth", option.Token)
 			req.Header.Add("Authorization", option.Token)
 		}
 		if option.Username != "" && option.Password != "" {

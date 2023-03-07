@@ -2,7 +2,6 @@ package service
 
 import (
 	"crypto/tls"
-	"net"
 	"net/http"
 	"time"
 )
@@ -19,15 +18,11 @@ type service struct {
 }
 
 func NewService() Service {
+
 	client := &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			Proxy:           http.ProxyFromEnvironment,
-			DialContext: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-				DualStack: true,
-			}).DialContext,
+			TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
+			Dial:                nil,
 			MaxIdleConns:        100,
 			MaxIdleConnsPerHost: 100,
 			IdleConnTimeout:     90 * time.Second,
