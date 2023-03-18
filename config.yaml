@@ -1,0 +1,11 @@
+server:
+  host: "0.0.0.0"
+  port: 8081
+wxConfig:
+  token: "p0HrmcDC1goL"
+  encoding_aeskey: "yMA8ePfLF5ChUOSDL0ZynZzA99uOoxJxLb5fhwxffiS"
+  corp_id: "ww7f756c0495ad8cc4"
+  corp_secret: "YFY0gcQVQQOHSKex7PIPpR58fvtjiXjrCYTlEyKgHw8"
+openAIConfig:
+  model: "gpt-3.5-turbo"
+  token: "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"

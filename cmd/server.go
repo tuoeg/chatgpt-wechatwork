@@ -5,6 +5,8 @@ import (
 	"os"
 	"server/pkg/route"
 
+	"server/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 )
@@ -23,7 +25,7 @@ func startServer() {
 	gin.SetMode(gin.Mode())
 	r := gin.Default()
 	route.InstallRoutes(r)
-	serverBindAddr := fmt.Sprintf("%s:%d", "0.0.0.0", 8081)
+	serverBindAddr := fmt.Sprintf("%s:%d", config.NewConfig().Server.Host, config.NewConfig().Server.Post)
 	r.Run(serverBindAddr) // listen and serve
 }
 

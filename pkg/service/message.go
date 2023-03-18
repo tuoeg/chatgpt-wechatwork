@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
+	"server/config"
 	"server/pkg/model"
 	"server/pkg/util"
 	"server/pkg/wxbizmsgcrypt"
@@ -13,8 +14,8 @@ import (
 
 func (s *service) GetToken() (string, error) {
 	var tokenResponse model.TokenResponse
-	corpid := "ww7f756c0495ad8cc4"
-	corpsecret := "YFY0gcQVQQOHSKex7PIPpR58fvtjiXjrCYTlEyKgHw8"
+	corpid := config.NewConfig().WxConfig.CorpId
+	corpsecret := config.NewConfig().WxConfig.CorpSecret
 	url := fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s", corpid, corpsecret)
 	req, _, err := util.SendHTTPRequest(s.httpClient, url, "GET", nil, nil)
 	if err != nil {
@@ -28,12 +29,11 @@ func (s *service) GetToken() (string, error) {
 
 func (s *service) SendMsg(msgSignature, timestamp, nonce string, msg []byte) (string, error) {
 	accessToken, err := s.GetToken()
-	fmt.Println(accessToken)
 	if err != nil {
 		return "", err
 	}
 	// 校验
-	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt("p0HrmcDC1goL", "yMA8ePfLF5ChUOSDL0ZynZzA99uOoxJxLb5fhwxffiS", "ww7f756c0495ad8cc4", wxbizmsgcrypt.XmlType)
+	wxcpt := wxbizmsgcrypt.NewWXBizMsgCrypt(config.NewConfig().WxConfig.Token, config.NewConfig().WxConfig.EncodingAeskey, config.NewConfig().WxConfig.CorpId, wxbizmsgcrypt.XmlType)
 	msg, cryptErr := wxcpt.DecryptMsg(msgSignature, timestamp, nonce, msg)
 	if cryptErr != nil {
 		return "", fmt.Errorf("Decrypt msg error:%s", cryptErr.ErrMsg)
@@ -44,7 +44,6 @@ func (s *service) SendMsg(msgSignature, timestamp, nonce string, msg []byte) (st
 	if nil != err {
 		return "", err
 	}
-	// openai解析消息
 
 	// 异步发送消息到企业微信
 	go s.sendMsgToWx(msgContent.FromUsername, msgContent.Content, accessToken)
@@ -148,10 +147,10 @@ func (s *service) sendMsgToWx(user, msg, token string) {
 func (s *service) sendMsgToOpenAI(msg, user string) (string, error) {
 	var openAIResponse model.OpenAIResponse
 	openAIRequest := model.OpenAIRequest{
-		Model:    "gpt-3.5-turbo",
+		Model:    config.NewConfig().OpenAIConfig.Model,
 		Messages: []model.Message{{Role: "user", Content: msg}},
 	}
-	req, _, err := util.SendHTTPRequest(s.httpClient, "https://api.openai.com/v1/chat/completions", "POST", openAIRequest, &util.HTTPOptions{Token: "Bearer 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", ContentType: "application/json;charset=utf-8"})
+	req, _, err := util.SendHTTPRequest(s.httpClient, "https://api.openai.com/v1/chat/completions", "POST", openAIRequest, &util.HTTPOptions{Token: fmt.Sprintf("Bearer %s", config.NewConfig().OpenAIConfig.Token), ContentType: "application/json;charset=utf-8"})
 	if err != nil {
 		return "", err
 	}
